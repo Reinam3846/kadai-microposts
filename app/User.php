@@ -59,7 +59,17 @@ class User extends Authenticatable
     public function followers()
     {
         return $this->belongsToMany(User::class, 'user_follow', 'follow_id', 'user_id')->withTimestamps();
+     
+    }/**
+     * このユーザをフェイバリット中のユーザ。（ Userモデルとの関係を定義）
+     */ 
+    function favorites()
+    {
+        return $this->belongsToMany(Micropost::class, 'favorites','user_id', 'micropost_id' )->withTimestamps();
     }
+         
+   
+    
      public function follow($userId)
     {
         // すでにフォローしているかの確認
@@ -124,7 +134,49 @@ class User extends Authenticatable
      */
     public function loadRelationshipCounts()
     {
-        $this->loadCount(['microposts', 'followings', 'followers']);
+        $this->loadCount(['microposts', 'followings', 'followers','favorites']);
+    }
+    
+    public function favorite($micropostId)
+    {
+        // すでにフェイバリットしているかの確認
+        $exist = $this->is_favorites($micropostId);
+        // 相手が自分自身かどうかの確認
+
+        if($exist) {
+           
+            return false;
+        } else {
+            
+            $this->favorites()->attach($micropostId);
+            return true;
+        }
+    }
+    /**
+     * $userIdで指定されたユーザをお気に入りから外す。
+     *
+     * @param  int  $userId
+     * @return bool
+     */
+   public function unfavorite($micropostId)
+    {
+        // すでにフェイバリットしているかの確認
+        $exist = $this->is_favorites($micropostId);
+        // 相手が自分自身かどうかの確認
+
+        if ($exist) {
+            // すでにフェイバリットしていればフェイバリットを外す
+            $this->unfavorite()->detach($$micropostId);
+            return true;
+        } else {
+            // 未アンフェイバリットであれば何もしない
+            return false;
+        }
+    }
+     public function is_favorites($micropostId)
+    {
+        // フェイバリット中ユーザの中に $userIdのものが存在するか
+        return $this->favorites()->where('micropost_id',$micropostId)->exists();
     }
 }    
     
