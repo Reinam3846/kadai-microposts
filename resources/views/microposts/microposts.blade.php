@@ -15,6 +15,9 @@
                         <p class="mb-0">{!! nl2br(e($micropost->content))!!}</p>
                     </div>
                     <div>
+                        <div class="btn-group">
+                            @include('user_favorite.favorite_button')
+                        </div>
                            @if (Auth::id() == $micropost->user_id)
                             <div class="btn-group">
                                 {{-- 投稿削除ボタンのフォーム --}}
@@ -22,9 +25,8 @@
                                 {!! Form::submit('Delete', ['class' => 'btn btn-danger btn-sm']) !!}
                             {!! Form::close() !!}
                             </div>
-                            <div class="btn-group">
-                            @include('user_favorite.favorite_button')
-                        </div>
+                            
+                            
                       
                     </div>
                      

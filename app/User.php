@@ -152,6 +152,7 @@ class User extends Authenticatable
             return true;
         }
     }
+    
     /**
      * $userIdで指定されたユーザをお気に入りから外す。
      *
@@ -166,7 +167,7 @@ class User extends Authenticatable
 
         if ($exist) {
             // すでにフェイバリットしていればフェイバリットを外す
-            $this->unfavorite()->detach($$micropostId);
+        $this->favorites()->detach($micropostId);
             return true;
         } else {
             // 未アンフェイバリットであれば何もしない
